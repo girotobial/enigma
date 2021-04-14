@@ -1,0 +1,55 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.158.0/containers/docker-from-docker
+{
+	"name": "enigma",
+	"dockerFile": "Dockerfile",
+	
+	// Use this environment variable if you need to bind mount your local source code into a new container.
+	"remoteEnv": {
+		"LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
+	},
+
+	// Set *default* container specific settings.json values on container create.
+	"settings": { 
+		"terminal.integrated.shell.linux": "/bin/bash",
+		"python.pythonPath": "/home/vscode/.cache/pypoetry/virtualenvs/enigma-i_iC61SO-py3.9/bin/python",
+		"python.linting.enabled": true,
+		"python.linting.pylintEnabled": false,
+		"python.linting.flake8Enabled": true,
+		"python.linting.mypyEnabled": true,
+		"python.testing.pytestArgs": [
+			"tests"
+		],
+		"python.testing.unittestEnabled": false,
+		"python.testing.nosetestsEnabled": false,
+		"python.testing.pytestEnabled": true,
+	},
+
+	// Add the IDs of extensions you want installed when the container is created.
+	"extensions": [
+		"ms-azuretools.vscode-docker",
+		"ms-python.python",
+		"visualstudioexptteam.vscodeintellicode",
+		"hbenl.vscode-test-explorer",
+		"sourcery.sourcery",
+		"ban.spellright",
+		"littlefoxteam.vscode-python-test-adapter",
+		"njpwerner.autodocstring",
+		"cameron.vscode-pytest",
+		"rubymaniac.vscode-paste-and-indent",
+		"magicstack.magicpython",
+		"oderwat.indent-rainbow",
+		"eamodio.gitlens",
+		"github.vscode-pull-request-github",
+		"lextudio.restructuredtext"
+	],
+	
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "bash scripts/setup-environment.sh",
+
+	// Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+	"remoteUser": "vscode"
+}
