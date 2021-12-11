@@ -1,13 +1,7 @@
 strictness: high
-doc-warnings: true
-
-inherits:
-  - test_warnings
-
+test-warnings: false
 
 pep257:
-  options:
-    match: (?!test_).*\.py
   disable:
     - D107
     - D203

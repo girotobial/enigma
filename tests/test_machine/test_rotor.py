@@ -1,5 +1,9 @@
 """Tests for the rotor of the enigma machine"""
 
+from dataclasses import dataclass
+
+import pytest
+
 from enigma.machine import rotor
 
 
@@ -22,3 +26,36 @@ def test_rotor_intializes() -> None:
     assert test_rotor.ring_setting == 3
     assert test_rotor.forward_wiring == list(range(26))
     assert test_rotor.backward_wiring == list(reversed(list(range(26))))
+
+
+@dataclass(frozen=True)
+class _RotorAttrs:
+    forward_wiring: list[int]
+    notch_position: int
+
+
+def _encode(string: str) -> list[int]:
+    return list(map(lambda c: ord(c) - 65, string))
+
+
+ROTOR_ENCODINGS = {
+    "I": _RotorAttrs(_encode("EKMFLGDQVZNTOWYHXUSPAIBRCJ"), 16),
+    "II": _RotorAttrs(_encode("AJDKSIRUXBLHWTMCQGZNPYFVOE"), 4),
+    "III": _RotorAttrs(_encode("BDFHJLCPRTXVZNYEIWGAKMUSQO"), 21),
+    "IV": _RotorAttrs(_encode("ESOVPZJAYQUIRHXLNFTGKDCMWB"), 9),
+    "V": _RotorAttrs(_encode("VZBRGITYUPSDNHLXAWMJQOFECK"), 25),
+}
+
+
+@pytest.mark.parametrize(("name", "expected_attrs"), list(ROTOR_ENCODINGS.items()))
+def test_create_rotor_with_a_historic_configuration(name, expected_attrs) -> None:
+    """GIVEN a rotor
+    WHEN create_rotor is called with a historic configuration name.
+    THEN intialize a rotor with that configuration
+    """
+    rotor_t: rotor.Rotor = rotor.create_rotor(name, 1, 2)
+    assert rotor_t.forward_wiring == expected_attrs.forward_wiring
+    assert rotor_t.name == name
+    assert rotor_t.notch_position == expected_attrs.notch_position
+    assert rotor_t.rotor_position == 1
+    assert rotor_t.ring_setting == 2
