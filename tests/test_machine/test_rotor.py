@@ -44,6 +44,9 @@ ROTOR_ENCODINGS = {
     "III": _RotorAttrs(_encode("BDFHJLCPRTXVZNYEIWGAKMUSQO"), 21),
     "IV": _RotorAttrs(_encode("ESOVPZJAYQUIRHXLNFTGKDCMWB"), 9),
     "V": _RotorAttrs(_encode("VZBRGITYUPSDNHLXAWMJQOFECK"), 25),
+    "VI": _RotorAttrs(_encode("JPGVOUMFYQBENHZRDKASXLICTW"), 0),
+    "VII": _RotorAttrs(_encode("NZJHGRCXMYSWBOUFAIVLPEKQDT"), 0),
+    "VIII": _RotorAttrs(_encode("FKQHTLXOCBJSPDZRAMEWNIUYGV"), 0),
 }
 
 
