@@ -22,6 +22,7 @@
 		"python.testing.unittestEnabled": false,
 		"python.testing.nosetestsEnabled": false,
 		"python.testing.pytestEnabled": true,
+		"python.testing.autoTestDiscoverOnSaveEnabled": true,
 		"git.enableCommitSigning": false
 	},
 	// Add the IDs of extensions you want installed when the container is created.
@@ -34,7 +35,6 @@
 		"ban.spellright",
 		"littlefoxteam.vscode-python-test-adapter",
 		"njpwerner.autodocstring",
-		"cameron.vscode-pytest",
 		"rubymaniac.vscode-paste-and-indent",
 		"magicstack.magicpython",
 		"oderwat.indent-rainbow",
@@ -42,7 +42,7 @@
 		"github.vscode-pull-request-github",
 		"lextudio.restructuredtext",
 		"vtrois.gitmoji-vscode",
-		"bungcip.better-toml"
+		"bungcip.better-toml",
 	],
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
