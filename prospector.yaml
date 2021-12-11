@@ -1,2 +1,15 @@
 test-warnings: true
 strictness: high
+doc-warnings: true
+
+pep257:
+  convention: numpy
+  disable:
+    - D107
+    - D212
+    - D213
+    - D402
+    - D413
+    - D415
+    - D416
+    - D417

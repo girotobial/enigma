@@ -1,7 +1,29 @@
+"""Implements fitness functions used in cryptoanalysis."""
+
 import collections
 
 
-def index_of_coincidence(text: str, normalizing_coeficient: int = 26) -> float:
+def index_of_coincidence(
+    text: str, normalizing_coeficient: int = 26, normalize: bool = True
+) -> float:
+    """The index of coincidence is the probability of two randomly selected letters being equal.
+
+    Parameters
+    ----------
+    text : str
+        The text to analyze
+    normalizing_coeficient : int, optional
+        The normalizing coefficient, usually the number of unique characters
+        in the language's alphabet, by default 26. Ignored if normalize is false
+    normalize : bool, optional
+        Whether to normalize the output , by default True
+
+    Returns
+    -------
+    float
+    """
+    if not normalize:
+        normalizing_coeficient = 1
 
     text_length = len(text)
     denominator = text_length * (text_length - 1) / normalizing_coeficient
