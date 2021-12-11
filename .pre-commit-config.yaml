@@ -1,32 +1,12 @@
 repos:
-- repo: local
+- repo: git://github.com/nbQA-dev/nbQA
+  rev: "7ab6f126a39765a9a2887dbff4e943a57115a6e6"
   hooks:
-  - id: isort
-    name: isort
-    stages: [commit]
-    language: system
-    entry: poetry run isort
-    types: [python]
+  - id: nbqa-mypy
+  - id: nbqa-black
+  - id: nbqa-isort
 
-  - id: black
-    name: black
-    stages: [commit]
-    language: system
-    entry: poetry run black
-    types: [python]
-
-  - id: flake8
-    name: flake8
-    stages: [commit]
-    language: system
-    entry: poetry run flake8
-    types: [python]
-    exclude: setup.py
-
-  - id: mypy
-    name: mypy
-    stages: [commit]
-    language: system
-    entry: poetry run mypy --ignore-missing-imports
-    types: [python]
-    require_serial: true
+- repo: git://github.com/guykisel/prospector-mirror
+  rev: "7ff847e779347033ebbd9e3b88279e7f3a998b45"
+  hooks:
+  - id: prospector
