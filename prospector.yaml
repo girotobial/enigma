@@ -1,12 +1,16 @@
-test-warnings: true
 strictness: high
 doc-warnings: true
 
+inherits:
+  - test_warnings
+
+
 pep257:
-  convention: numpy
-  match: "engima\."
+  options:
+    match: (?!test_).*\.py
   disable:
     - D107
+    - D203
     - D212
     - D213
     - D402
