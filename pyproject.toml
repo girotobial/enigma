@@ -22,7 +22,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.isort]
 profile = "black"
-src_path = ["enigma", "tests"]
+src_paths = ["enigma", "tests"]
 use_parentheses= true
 multi_line_output= 3
 include_trailing_comma= true
