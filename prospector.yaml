@@ -4,6 +4,7 @@ doc-warnings: true
 
 pep257:
   convention: numpy
+  match: "engima\."
   disable:
     - D107
     - D212
