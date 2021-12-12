@@ -14,6 +14,7 @@ class Rotor(Protocol):
     rotor_position: int
     notch_position: int
     ring_setting: int
+    is_at_notch: bool
 
     def turnover(self) -> None:
         ...
@@ -55,6 +56,10 @@ class BasicRotor:
     @staticmethod
     def _decode_wiring(encoding: str) -> list[int]:
         return list(map(lambda c: ord(c) - 65, encoding))
+
+    @property
+    def is_at_notch(self) -> bool:
+        return self.rotor_position == self.notch_position
 
 
 def create_rotor(name: NamedRotor, rotor_position: int, ring_setting: int) -> Rotor:
