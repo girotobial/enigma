@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-import enum
 from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Protocol, Type, Union, overload
+
+from .. import core
 
 
 def _character_to_int(char: str) -> int:
@@ -114,17 +115,6 @@ class Rotor(Protocol):
         ...
 
 
-class NamedRotor(enum.Enum):
-    I = enum.auto()  # noqa E741
-    II = enum.auto()
-    III = enum.auto()
-    IV = enum.auto()
-    V = enum.auto()
-    VI = enum.auto()
-    VII = enum.auto()
-    VIII = enum.auto()
-
-
 class BasicRotor(Rotor):
     """A rotor in the enigma machine"""
 
@@ -216,7 +206,9 @@ class TwoNotchRotor(BasicRotor):
         return self.rotor_position in [12, 25]
 
 
-def create_rotor(name: NamedRotor, rotor_position: int, ring_setting: int) -> Rotor:
+def create_rotor(
+    name: core.NamedRotor, rotor_position: int, ring_setting: int
+) -> Rotor:
     @dataclass(frozen=True)
     class RotorInput:
         encoding: str
@@ -224,14 +216,16 @@ def create_rotor(name: NamedRotor, rotor_position: int, ring_setting: int) -> Ro
         rotor_type: Type[Rotor]
 
     named_rotors_inputs = {
-        NamedRotor.I: RotorInput("EKMFLGDQVZNTOWYHXUSPAIBRCJ", 16, BasicRotor),
-        NamedRotor.II: RotorInput("AJDKSIRUXBLHWTMCQGZNPYFVOE", 4, BasicRotor),
-        NamedRotor.III: RotorInput("BDFHJLCPRTXVZNYEIWGAKMUSQO", 21, BasicRotor),
-        NamedRotor.IV: RotorInput("ESOVPZJAYQUIRHXLNFTGKDCMWB", 9, BasicRotor),
-        NamedRotor.V: RotorInput("VZBRGITYUPSDNHLXAWMJQOFECK", 25, BasicRotor),
-        NamedRotor.VI: RotorInput("JPGVOUMFYQBENHZRDKASXLICTW", 0, TwoNotchRotor),
-        NamedRotor.VII: RotorInput("NZJHGRCXMYSWBOUFAIVLPEKQDT", 0, TwoNotchRotor),
-        NamedRotor.VIII: RotorInput("FKQHTLXOCBJSPDZRAMEWNIUYGV", 0, TwoNotchRotor),
+        core.NamedRotor.I: RotorInput("EKMFLGDQVZNTOWYHXUSPAIBRCJ", 16, BasicRotor),
+        core.NamedRotor.II: RotorInput("AJDKSIRUXBLHWTMCQGZNPYFVOE", 4, BasicRotor),
+        core.NamedRotor.III: RotorInput("BDFHJLCPRTXVZNYEIWGAKMUSQO", 21, BasicRotor),
+        core.NamedRotor.IV: RotorInput("ESOVPZJAYQUIRHXLNFTGKDCMWB", 9, BasicRotor),
+        core.NamedRotor.V: RotorInput("VZBRGITYUPSDNHLXAWMJQOFECK", 25, BasicRotor),
+        core.NamedRotor.VI: RotorInput("JPGVOUMFYQBENHZRDKASXLICTW", 0, TwoNotchRotor),
+        core.NamedRotor.VII: RotorInput("NZJHGRCXMYSWBOUFAIVLPEKQDT", 0, TwoNotchRotor),
+        core.NamedRotor.VIII: RotorInput(
+            "FKQHTLXOCBJSPDZRAMEWNIUYGV", 0, TwoNotchRotor
+        ),
     }
 
     inputs = named_rotors_inputs[name]

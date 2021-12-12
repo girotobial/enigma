@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 import pytest
 
+from enigma import core
 from enigma.machine import rotor
 
 
@@ -56,14 +57,14 @@ class _RotorAttrs:
 
 
 ROTOR_ENCODINGS = {
-    rotor.NamedRotor.I: _RotorAttrs(rotor.Wiring("EKMFLGDQVZNTOWYHXUSPAIBRCJ"), 16),
-    rotor.NamedRotor.II: _RotorAttrs(rotor.Wiring("AJDKSIRUXBLHWTMCQGZNPYFVOE"), 4),
-    rotor.NamedRotor.III: _RotorAttrs(rotor.Wiring("BDFHJLCPRTXVZNYEIWGAKMUSQO"), 21),
-    rotor.NamedRotor.IV: _RotorAttrs(rotor.Wiring("ESOVPZJAYQUIRHXLNFTGKDCMWB"), 9),
-    rotor.NamedRotor.V: _RotorAttrs(rotor.Wiring("VZBRGITYUPSDNHLXAWMJQOFECK"), 25),
-    rotor.NamedRotor.VI: _RotorAttrs(rotor.Wiring("JPGVOUMFYQBENHZRDKASXLICTW"), 0),
-    rotor.NamedRotor.VII: _RotorAttrs(rotor.Wiring("NZJHGRCXMYSWBOUFAIVLPEKQDT"), 0),
-    rotor.NamedRotor.VIII: _RotorAttrs(rotor.Wiring("FKQHTLXOCBJSPDZRAMEWNIUYGV"), 0),
+    core.NamedRotor.I: _RotorAttrs(rotor.Wiring("EKMFLGDQVZNTOWYHXUSPAIBRCJ"), 16),
+    core.NamedRotor.II: _RotorAttrs(rotor.Wiring("AJDKSIRUXBLHWTMCQGZNPYFVOE"), 4),
+    core.NamedRotor.III: _RotorAttrs(rotor.Wiring("BDFHJLCPRTXVZNYEIWGAKMUSQO"), 21),
+    core.NamedRotor.IV: _RotorAttrs(rotor.Wiring("ESOVPZJAYQUIRHXLNFTGKDCMWB"), 9),
+    core.NamedRotor.V: _RotorAttrs(rotor.Wiring("VZBRGITYUPSDNHLXAWMJQOFECK"), 25),
+    core.NamedRotor.VI: _RotorAttrs(rotor.Wiring("JPGVOUMFYQBENHZRDKASXLICTW"), 0),
+    core.NamedRotor.VII: _RotorAttrs(rotor.Wiring("NZJHGRCXMYSWBOUFAIVLPEKQDT"), 0),
+    core.NamedRotor.VIII: _RotorAttrs(rotor.Wiring("FKQHTLXOCBJSPDZRAMEWNIUYGV"), 0),
 }
 
 
@@ -82,7 +83,7 @@ def test_create_rotor_with_a_historic_configuration(name, expected_attrs) -> Non
 
 
 @pytest.mark.parametrize(
-    "name", [rotor.NamedRotor.VI, rotor.NamedRotor.VII, rotor.NamedRotor.VIII]
+    "name", [core.NamedRotor.VI, core.NamedRotor.VII, core.NamedRotor.VIII]
 )
 def test_create_rotor_vi_vii_viii_are_double_notched(name):
     t_rotor = rotor.create_rotor(name, 12, 0)
