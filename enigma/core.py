@@ -2,7 +2,7 @@
 
 
 import enum
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 class NamedRotor(enum.Enum):
@@ -18,7 +18,15 @@ class NamedRotor(enum.Enum):
 
 @dataclass
 class EnigmaKey:
-    rotors: list[NamedRotor] = [NamedRotor.I, NamedRotor.II, NamedRotor.III]
-    indicators: list[int] = [0, 0, 0]
-    rings: list[int] = [0, 0, 0]
+    rotors: list[NamedRotor] = field(default_factory=list)
+    indicators: list[int] = field(default_factory=list)
+    rings: list[int] = field(default_factory=list)
     plugboard: str = ""
+
+    def __post_init__(self) -> None:
+        if len(self.rotors) == 0:
+            self.rotors = [NamedRotor.I, NamedRotor.II, NamedRotor.III]
+        if len(self.indicators) == 0:
+            self.indicators = [0, 0, 0]
+        if len(self.rings) == 0:
+            self.rings = [0, 0, 0]
