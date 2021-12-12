@@ -7,46 +7,63 @@ import pytest
 from enigma.machine import rotor
 
 
-def test_rotor_intializes() -> None:
-    """GIVEN a set of inputs
+class TestWiring:
+    @staticmethod
+    def test_wiring_encodes() -> None:
+        encoding = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        wiring = rotor.Wiring(encoding)
+        assert wiring.encoding == encoding
+        assert wiring == list(range(26))
 
-    THEN the rotor intializes
-    AND stores that data
-    """
-    test_rotor = rotor.BasicRotor(
-        name="Test",
-        encoding="ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-        rotor_position=1,
-        notch_position=2,
-        ring_setting=3,
+    @staticmethod
+    def test_wiring_encodes_null_string() -> None:
+        encoding = ""
+        wiring = rotor.Wiring(encoding)
+        assert wiring.encoding == encoding
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        ("encoding", "inverse"),
+        [
+            ("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "ABCDEFGHIJKLMNOPQRSTUVWXYZ"),
+            ("EKMFLGDQVZNTOWYHXUSPAIBRCJ", "UWYGADFPVZBECKMTHXSLRINQOJ"),
+        ],
     )
-    assert test_rotor.name == "Test"
-    assert test_rotor.rotor_position == 1
-    assert test_rotor.notch_position == 2
-    assert test_rotor.ring_setting == 3
-    assert test_rotor.forward_wiring == list(range(26))
-    assert test_rotor.backward_wiring == list(reversed(list(range(26))))
+    def test_wiring_inverse(encoding, inverse) -> None:
+        wiring = rotor.Wiring(encoding)
+        assert wiring.inverse().encoding == inverse
+
+    @staticmethod
+    @pytest.fixture
+    def wiring() -> rotor.Wiring:
+        return rotor.Wiring("EKMFLGDQVZNTOWYHXUSPAIBRCJ")
+
+    @staticmethod
+    def test_wiring_can_be_cast_to_list(wiring) -> None:
+        wiring_list = list(wiring)
+        assert isinstance(wiring_list, list)
+
+    @staticmethod
+    def test_wiring_can_be_sliced(wiring) -> None:
+        value = wiring[0]
+        assert value == 4
 
 
 @dataclass(frozen=True)
 class _RotorAttrs:
-    forward_wiring: list[int]
+    forward_wiring: rotor.Wiring
     notch_position: int
 
 
-def _encode(string: str) -> list[int]:
-    return list(map(lambda c: ord(c) - 65, string))
-
-
 ROTOR_ENCODINGS = {
-    rotor.NamedRotor.I: _RotorAttrs(_encode("EKMFLGDQVZNTOWYHXUSPAIBRCJ"), 16),
-    rotor.NamedRotor.II: _RotorAttrs(_encode("AJDKSIRUXBLHWTMCQGZNPYFVOE"), 4),
-    rotor.NamedRotor.III: _RotorAttrs(_encode("BDFHJLCPRTXVZNYEIWGAKMUSQO"), 21),
-    rotor.NamedRotor.IV: _RotorAttrs(_encode("ESOVPZJAYQUIRHXLNFTGKDCMWB"), 9),
-    rotor.NamedRotor.V: _RotorAttrs(_encode("VZBRGITYUPSDNHLXAWMJQOFECK"), 25),
-    rotor.NamedRotor.VI: _RotorAttrs(_encode("JPGVOUMFYQBENHZRDKASXLICTW"), 0),
-    rotor.NamedRotor.VII: _RotorAttrs(_encode("NZJHGRCXMYSWBOUFAIVLPEKQDT"), 0),
-    rotor.NamedRotor.VIII: _RotorAttrs(_encode("FKQHTLXOCBJSPDZRAMEWNIUYGV"), 0),
+    rotor.NamedRotor.I: _RotorAttrs(rotor.Wiring("EKMFLGDQVZNTOWYHXUSPAIBRCJ"), 16),
+    rotor.NamedRotor.II: _RotorAttrs(rotor.Wiring("AJDKSIRUXBLHWTMCQGZNPYFVOE"), 4),
+    rotor.NamedRotor.III: _RotorAttrs(rotor.Wiring("BDFHJLCPRTXVZNYEIWGAKMUSQO"), 21),
+    rotor.NamedRotor.IV: _RotorAttrs(rotor.Wiring("ESOVPZJAYQUIRHXLNFTGKDCMWB"), 9),
+    rotor.NamedRotor.V: _RotorAttrs(rotor.Wiring("VZBRGITYUPSDNHLXAWMJQOFECK"), 25),
+    rotor.NamedRotor.VI: _RotorAttrs(rotor.Wiring("JPGVOUMFYQBENHZRDKASXLICTW"), 0),
+    rotor.NamedRotor.VII: _RotorAttrs(rotor.Wiring("NZJHGRCXMYSWBOUFAIVLPEKQDT"), 0),
+    rotor.NamedRotor.VIII: _RotorAttrs(rotor.Wiring("FKQHTLXOCBJSPDZRAMEWNIUYGV"), 0),
 }
 
 
@@ -75,6 +92,28 @@ def test_create_rotor_vi_vii_viii_are_double_notched(name):
 
 
 class TestBasicRotor:
+    @staticmethod
+    def test_rotor_intializes() -> None:
+        """GIVEN a set of inputs
+
+        THEN the rotor intializes
+        AND stores that data
+        """
+        test_rotor = rotor.BasicRotor(
+            name="Test",
+            encoding="ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+            rotor_position=1,
+            notch_position=2,
+            ring_setting=3,
+        )
+        assert test_rotor.name == "Test"
+        assert test_rotor.rotor_position == 1
+        assert test_rotor.notch_position == 2
+        assert test_rotor.ring_setting == 3
+        expected_wiring = rotor.Wiring("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+        assert test_rotor.forward_wiring == expected_wiring
+        assert test_rotor.backward_wiring == expected_wiring.inverse()
+
     @pytest.fixture
     def basic_rotor(self) -> rotor.BasicRotor:  # noqa no-self-use
         return rotor.BasicRotor("Test", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 1, 2, 3)
@@ -85,6 +124,16 @@ class TestBasicRotor:
     def test_is_at_notch_is_true(self, basic_rotor) -> None:  # noqa no-self-use
         basic_rotor.notch_position = 1
         assert basic_rotor.is_at_notch is True
+
+    @staticmethod
+    def test_rotor_turnover(basic_rotor) -> None:
+        for _ in range(26 * 4):
+            old_position = basic_rotor.rotor_position
+            basic_rotor.turnover()
+            new_position = basic_rotor.rotor_position
+            if old_position != 25:
+                assert new_position - old_position == 1
+            assert new_position < 26
 
 
 class TestTwoNotchRotor:
