@@ -116,7 +116,7 @@ class TestBasicRotor:
 
     @pytest.fixture
     def basic_rotor(self) -> rotor.BasicRotor:  # noqa no-self-use
-        return rotor.BasicRotor("Test", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 1, 2, 3)
+        return rotor.BasicRotor("Test", "JPGVOUMFYQBENHZRDKASXLICTW", 1, 2, 3)
 
     def test_is_at_notch_is_false(self, basic_rotor) -> None:  # noqa no-self-use
         assert basic_rotor.is_at_notch is False
@@ -134,6 +134,27 @@ class TestBasicRotor:
             if old_position != 25:
                 assert new_position - old_position == 1
             assert new_position < 26
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "value", [*list(range(26)), *list(map(lambda i: chr(i + 65), range(26)))]
+    )
+    def test_rotor_enciphering_is_reversible(basic_rotor, value) -> None:
+        assert basic_rotor.backward(basic_rotor.forward(value)) == value
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        ("value", "expected"),
+        [
+            *zip(
+                list(map(lambda i: chr(i + 65), range(26))),
+                list("JPGVOUMFYQBENHZRDKASXLICTW"),
+            )
+        ],
+    )
+    def test_rotor_encrypts_correctly(value, expected):
+        t_rotor = rotor.BasicRotor("test", "JPGVOUMFYQBENHZRDKASXLICTW", 0, 0, 0)
+        assert t_rotor.forward(value) == expected
 
 
 class TestTwoNotchRotor:

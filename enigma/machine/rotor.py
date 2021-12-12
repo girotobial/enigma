@@ -5,7 +5,15 @@ from __future__ import annotations
 import enum
 from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Protocol, Type
+from typing import Protocol, Type, Union, overload
+
+
+def _character_to_int(char: str) -> int:
+    return ord(char) - 65
+
+
+def _int_to_char(val: int) -> str:
+    return chr(val + 65)
 
 
 class Wiring(Sequence):
@@ -39,11 +47,11 @@ class Wiring(Sequence):
 
     @staticmethod
     def _decode(encoding: str) -> list[int]:
-        return list(map(lambda c: ord(c) - 65, encoding))
+        return list(map(_character_to_int, encoding))
 
     @property
     def encoding(self) -> str:
-        return "".join(list(map(lambda i: chr(i + 65), self.__coding)))
+        return "".join(list(map(_int_to_char, self.__coding)))
 
     def inverse(self) -> Wiring:
         inverse = [0] * len(self)
@@ -75,10 +83,26 @@ class Rotor(Protocol):
     def is_at_rotor(self) -> bool:
         ...
 
+    @overload
     def forward(self, value: int) -> int:
         ...
 
+    @overload
+    def forward(self, value: str) -> str:
+        ...
+
+    def forward(self, value: Union[int, str]) -> Union[int, str]:
+        ...
+
+    @overload
     def backward(self, value: int) -> int:
+        ...
+
+    @overload
+    def backward(self, value: str) -> str:
+        ...
+
+    def backward(self, value: Union[int, str]) -> Union[int, str]:
         ...
 
     @property
@@ -138,11 +162,41 @@ class BasicRotor(Rotor):
         shift: int = self.rotor_position - self.ring_setting
         return (wiring[(value + shift + 26) % 26] - shift + 26) % 26
 
-    def forward(self, value: int) -> int:
-        return self._encipher(value, self.forward_wiring)
+    def _encipher_char(self, value: str, wiring: Sequence[int]) -> str:
+        int_val = _character_to_int(value)
+        return _int_to_char(self._encipher(int_val, wiring))
 
+    @overload
+    def forward(self, value: int) -> int:
+        ...
+
+    @overload
+    def forward(self, value: str) -> str:
+        ...
+
+    def forward(self, value: Union[int, str]) -> Union[int, str]:
+        if isinstance(value, str) and len(value) == 1:
+            return self._encipher_char(value, self.forward_wiring)
+
+        if isinstance(value, int):
+            return self._encipher(value, self.forward_wiring)
+        raise NotImplementedError
+
+    @overload
     def backward(self, value: int) -> int:
-        return self._encipher(value, self.backward_wiring)
+        ...
+
+    @overload
+    def backward(self, value: str) -> str:
+        ...
+
+    def backward(self, value: Union[int, str]) -> Union[int, str]:
+        if isinstance(value, str) and len(value) == 1:
+            return self._encipher_char(value, self.backward_wiring)
+
+        if isinstance(value, int):
+            return self._encipher(value, self.backward_wiring)
+        raise NotImplementedError
 
 
 class TwoNotchRotor(BasicRotor):
