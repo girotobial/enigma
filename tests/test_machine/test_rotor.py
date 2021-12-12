@@ -62,3 +62,16 @@ def test_create_rotor_with_a_historic_configuration(name, expected_attrs) -> Non
     assert rotor_t.notch_position == expected_attrs.notch_position
     assert rotor_t.rotor_position == 1
     assert rotor_t.ring_setting == 2
+
+
+class TestBasicRotor:
+    @pytest.fixture
+    def basic_rotor(self) -> rotor.Rotor:  # noqa no-self-use
+        return rotor.BasicRotor("Test", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 1, 2, 3)
+
+    def test_is_at_notch_is_false(self, basic_rotor) -> None:  # noqa no-self-use
+        assert basic_rotor.is_at_notch is False
+
+    def test_is_at_notch_is_true(self, basic_rotor) -> None:  # noqa no-self-use
+        basic_rotor.notch_position = 1
+        assert basic_rotor.is_at_notch is True
