@@ -62,6 +62,23 @@ class BasicRotor:
         return self.rotor_position == self.notch_position
 
 
+class TwoNotchRotor(BasicRotor):
+    def __init__(  # noqa too-many-arguments
+        self,
+        name: str,
+        encoding: str,
+        rotor_position: int,
+        ring_setting: int,
+        notch_position: int,
+    ) -> None:
+        notch_position = 0
+        super().__init__(name, encoding, rotor_position, ring_setting, notch_position)
+
+    @property
+    def is_at_notch(self) -> bool:
+        return self.rotor_position in [12, 25]
+
+
 def create_rotor(name: NamedRotor, rotor_position: int, ring_setting: int) -> Rotor:
 
     RotorInput = namedtuple("RotorInput", "encoding notch_position")
