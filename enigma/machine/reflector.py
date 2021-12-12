@@ -1,5 +1,7 @@
 """The reflector component of an enigma machine"""
 
+from __future__ import annotations
+
 from typing import overload
 
 from .. import core
@@ -31,7 +33,7 @@ class Reflector:
         raise NotImplementedError
 
     @classmethod
-    def create(cls, name: str):
+    def create(cls, name: str) -> Reflector:
         encodings = {
             "B": "YRUHQSLDPXNGOKMIEBFZCWVJAT",
             "C": "FVPJIAOYEDRZXWGCTKUQSBNMHL",
