@@ -3,6 +3,9 @@
 
 import enum
 from dataclasses import dataclass, field
+from typing import Union
+
+Encypherable = Union[int, str]
 
 
 class NamedRotor(enum.Enum):

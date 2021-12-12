@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Protocol, Type, Union, overload
+from typing import Protocol, Type, overload
 
 from .. import core
 from . import wiring
@@ -41,7 +41,7 @@ class Rotor(Protocol):
     def forward(self, value: str) -> str:
         ...
 
-    def forward(self, value: Union[int, str]) -> Union[int, str]:
+    def forward(self, value: core.Encypherable) -> core.Encypherable:
         ...
 
     @overload
@@ -52,7 +52,7 @@ class Rotor(Protocol):
     def backward(self, value: str) -> str:
         ...
 
-    def backward(self, value: Union[int, str]) -> Union[int, str]:
+    def backward(self, value: core.Encypherable) -> core.Encypherable:
         ...
 
     @property
@@ -119,7 +119,7 @@ class BasicRotor(Rotor):
     def forward(self, value: str) -> str:
         ...
 
-    def forward(self, value: Union[int, str]) -> Union[int, str]:
+    def forward(self, value: core.Encypherable) -> core.Encypherable:
         if isinstance(value, str) and len(value) == 1:
             return self._encipher_char(value, self.forward_wiring)
 
@@ -135,7 +135,7 @@ class BasicRotor(Rotor):
     def backward(self, value: str) -> str:
         ...
 
-    def backward(self, value: Union[int, str]) -> Union[int, str]:
+    def backward(self, value: core.Encypherable) -> core.Encypherable:
         if isinstance(value, str) and len(value) == 1:
             return self._encipher_char(value, self.backward_wiring)
 
