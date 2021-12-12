@@ -3,13 +3,19 @@ from __future__ import annotations
 from typing import overload
 
 from .. import core
-from . import reflector, rotor
+from . import plugboard, reflector, rotor
 
 
 class EnigmaMachine:
-    def __init__(self, rotors: list[rotor.Rotor], reflector_: reflector.Reflector):
+    def __init__(
+        self,
+        rotors: list[rotor.Rotor],
+        reflector_: reflector.Reflector,
+        plugboard_: plugboard.Plugboard = plugboard.Plugboard(""),
+    ):
         self.rotors = rotors
         self.reflector = reflector_
+        self.plugboard = plugboard_
 
     @classmethod
     def from_key(cls, key: core.EnigmaKey) -> EnigmaMachine:
@@ -19,8 +25,9 @@ class EnigmaMachine:
                 key.rotors, key.indicators, key.rings
             )
         ]
+        plugboard_ = plugboard.Plugboard(key.plugboard)
 
-        return cls(rotors, reflector.Reflector.create("B"))
+        return cls(rotors, reflector.Reflector.create("B"), plugboard_)
 
     def rotate(self) -> None:
         def rotate_rotors(rotors: list[rotor.Rotor]) -> list[rotor.Rotor]:

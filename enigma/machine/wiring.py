@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import MutableSequence
 
 from ..core import character_to_int, int_to_char
 
 
-class Wiring(Sequence):
+class Wiring(MutableSequence):
     def __init__(self, encoding: str):
         self.__coding = self._decode(encoding.upper())
 
@@ -20,6 +20,19 @@ class Wiring(Sequence):
 
     def __getitem__(self, idx) -> int:  # type: ignore
         return self.__coding[idx]  # type:ignore
+
+    def __setitem__(self, idx: int, val: object) -> None:  # type:ignore
+        if not isinstance(val, int):
+            raise NotImplementedError
+        self.__coding[idx] = val
+
+    def __delitem__(self, idx: int) -> None:  # type:ignore
+        del self.__coding[idx]
+
+    def insert(self, index: int, value: object) -> None:  # type:ignore
+        if not isinstance(value, int):
+            raise NotImplementedError
+        self.__coding.insert(index, value)
 
     def __len__(self) -> int:
         return len(self.__coding)
