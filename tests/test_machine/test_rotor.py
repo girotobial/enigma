@@ -13,7 +13,7 @@ def test_rotor_intializes() -> None:
     THEN the rotor intializes
     AND stores that data
     """
-    test_rotor = rotor.Rotor(
+    test_rotor = rotor.BasicRotor(
         name="Test",
         encoding="ABCDEFGHIJKLMNOPQRSTUVWXYZ",
         rotor_position=1,
@@ -39,14 +39,14 @@ def _encode(string: str) -> list[int]:
 
 
 ROTOR_ENCODINGS = {
-    "I": _RotorAttrs(_encode("EKMFLGDQVZNTOWYHXUSPAIBRCJ"), 16),
-    "II": _RotorAttrs(_encode("AJDKSIRUXBLHWTMCQGZNPYFVOE"), 4),
-    "III": _RotorAttrs(_encode("BDFHJLCPRTXVZNYEIWGAKMUSQO"), 21),
-    "IV": _RotorAttrs(_encode("ESOVPZJAYQUIRHXLNFTGKDCMWB"), 9),
-    "V": _RotorAttrs(_encode("VZBRGITYUPSDNHLXAWMJQOFECK"), 25),
-    "VI": _RotorAttrs(_encode("JPGVOUMFYQBENHZRDKASXLICTW"), 0),
-    "VII": _RotorAttrs(_encode("NZJHGRCXMYSWBOUFAIVLPEKQDT"), 0),
-    "VIII": _RotorAttrs(_encode("FKQHTLXOCBJSPDZRAMEWNIUYGV"), 0),
+    rotor.NamedRotor.I: _RotorAttrs(_encode("EKMFLGDQVZNTOWYHXUSPAIBRCJ"), 16),
+    rotor.NamedRotor.II: _RotorAttrs(_encode("AJDKSIRUXBLHWTMCQGZNPYFVOE"), 4),
+    rotor.NamedRotor.III: _RotorAttrs(_encode("BDFHJLCPRTXVZNYEIWGAKMUSQO"), 21),
+    rotor.NamedRotor.IV: _RotorAttrs(_encode("ESOVPZJAYQUIRHXLNFTGKDCMWB"), 9),
+    rotor.NamedRotor.V: _RotorAttrs(_encode("VZBRGITYUPSDNHLXAWMJQOFECK"), 25),
+    rotor.NamedRotor.VI: _RotorAttrs(_encode("JPGVOUMFYQBENHZRDKASXLICTW"), 0),
+    rotor.NamedRotor.VII: _RotorAttrs(_encode("NZJHGRCXMYSWBOUFAIVLPEKQDT"), 0),
+    rotor.NamedRotor.VIII: _RotorAttrs(_encode("FKQHTLXOCBJSPDZRAMEWNIUYGV"), 0),
 }
 
 
@@ -58,7 +58,7 @@ def test_create_rotor_with_a_historic_configuration(name, expected_attrs) -> Non
     """
     rotor_t: rotor.Rotor = rotor.create_rotor(name, 1, 2)
     assert rotor_t.forward_wiring == expected_attrs.forward_wiring
-    assert rotor_t.name == name
+    assert rotor_t.name == str(name)
     assert rotor_t.notch_position == expected_attrs.notch_position
     assert rotor_t.rotor_position == 1
     assert rotor_t.ring_setting == 2
