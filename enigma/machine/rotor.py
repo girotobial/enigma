@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import enum
-from collections import namedtuple
-from typing import Protocol
+from dataclasses import dataclass
+from typing import Protocol, Type
 
 
 class Rotor(Protocol):
@@ -14,9 +14,22 @@ class Rotor(Protocol):
     rotor_position: int
     notch_position: int
     ring_setting: int
-    is_at_notch: bool
+
+    def __init__(  # noqa too-many-arguments
+        self,
+        name: str,
+        encoding: str,
+        rotor_position: int,
+        ring_setting: int,
+        notch_position: int,
+    ) -> None:
+        ...
 
     def turnover(self) -> None:
+        ...
+
+    @property
+    def is_at_rotor(self) -> bool:
         ...
 
 
@@ -31,7 +44,7 @@ class NamedRotor(enum.Enum):
     VIII = enum.auto()
 
 
-class BasicRotor:
+class BasicRotor(Rotor):
     """A rotor in the enigma machine"""
 
     def __init__(  # noqa too-many-arguments
@@ -80,20 +93,24 @@ class TwoNotchRotor(BasicRotor):
 
 
 def create_rotor(name: NamedRotor, rotor_position: int, ring_setting: int) -> Rotor:
+    @dataclass(frozen=True)
+    class RotorInput:
+        encoding: str
+        notch_position: int
+        rotor_type: Type[Rotor]
 
-    RotorInput = namedtuple("RotorInput", "encoding notch_position")
     named_rotors_inputs = {
-        NamedRotor.I: RotorInput("EKMFLGDQVZNTOWYHXUSPAIBRCJ", 16),
-        NamedRotor.II: RotorInput("AJDKSIRUXBLHWTMCQGZNPYFVOE", 4),
-        NamedRotor.III: RotorInput("BDFHJLCPRTXVZNYEIWGAKMUSQO", 21),
-        NamedRotor.IV: RotorInput("ESOVPZJAYQUIRHXLNFTGKDCMWB", 9),
-        NamedRotor.V: RotorInput("VZBRGITYUPSDNHLXAWMJQOFECK", 25),
-        NamedRotor.VI: RotorInput("JPGVOUMFYQBENHZRDKASXLICTW", 0),
-        NamedRotor.VII: RotorInput("NZJHGRCXMYSWBOUFAIVLPEKQDT", 0),
-        NamedRotor.VIII: RotorInput("FKQHTLXOCBJSPDZRAMEWNIUYGV", 0),
+        NamedRotor.I: RotorInput("EKMFLGDQVZNTOWYHXUSPAIBRCJ", 16, BasicRotor),
+        NamedRotor.II: RotorInput("AJDKSIRUXBLHWTMCQGZNPYFVOE", 4, BasicRotor),
+        NamedRotor.III: RotorInput("BDFHJLCPRTXVZNYEIWGAKMUSQO", 21, BasicRotor),
+        NamedRotor.IV: RotorInput("ESOVPZJAYQUIRHXLNFTGKDCMWB", 9, BasicRotor),
+        NamedRotor.V: RotorInput("VZBRGITYUPSDNHLXAWMJQOFECK", 25, BasicRotor),
+        NamedRotor.VI: RotorInput("JPGVOUMFYQBENHZRDKASXLICTW", 0, TwoNotchRotor),
+        NamedRotor.VII: RotorInput("NZJHGRCXMYSWBOUFAIVLPEKQDT", 0, TwoNotchRotor),
+        NamedRotor.VIII: RotorInput("FKQHTLXOCBJSPDZRAMEWNIUYGV", 0, TwoNotchRotor),
     }
 
     inputs = named_rotors_inputs[name]
-    return BasicRotor(
+    return inputs.rotor_type(
         str(name), inputs.encoding, rotor_position, ring_setting, inputs.notch_position
     )

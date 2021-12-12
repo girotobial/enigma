@@ -64,6 +64,16 @@ def test_create_rotor_with_a_historic_configuration(name, expected_attrs) -> Non
     assert rotor_t.ring_setting == 2
 
 
+@pytest.mark.parametrize(
+    "name", [rotor.NamedRotor.VI, rotor.NamedRotor.VII, rotor.NamedRotor.VIII]
+)
+def test_create_rotor_vi_vii_viii_are_double_notched(name):
+    t_rotor = rotor.create_rotor(name, 12, 0)
+    assert t_rotor.is_at_notch
+    t_rotor.rotor_position = 25
+    assert t_rotor.is_at_notch
+
+
 class TestBasicRotor:
     @pytest.fixture
     def basic_rotor(self) -> rotor.BasicRotor:  # noqa no-self-use
