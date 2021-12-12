@@ -12,6 +12,6 @@ repos:
     name: prospector
     stages: [commit]
     language: system
-    entry: poetry run prospector
+    entry: poetry run prospector --profile-path prospector.yaml
     types: [python]
     require_serial: true

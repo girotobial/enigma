@@ -7,58 +7,7 @@ from dataclasses import dataclass
 from typing import Protocol, Type, Union, overload
 
 from .. import core
-
-
-def _character_to_int(char: str) -> int:
-    return ord(char) - 65
-
-
-def _int_to_char(val: int) -> str:
-    return chr(val + 65)
-
-
-class Wiring(Sequence):
-    def __init__(self, encoding: str):
-        self.__coding = self._decode(encoding.upper())
-
-    def __eq__(self, __o: object) -> bool:
-        if isinstance(__o, Wiring):
-            return self.__coding == __o.__coding  # noqa protected-access
-        if isinstance(__o, list):
-            return self.__coding == __o
-        raise NotImplementedError
-
-    def __getitem__(self, idx) -> int:  # type: ignore
-        return self.__coding[idx]  # type:ignore
-
-    def __len__(self) -> int:
-        return len(self.__coding)
-
-    def __repr__(self) -> str:
-        return f"Wiring('{self.encoding}')"
-
-    def __str__(self) -> str:
-        return str(self.__coding)
-
-    @classmethod
-    def _from_decoded(cls, decoded: list[int]) -> Wiring:
-        instance = cls("A")
-        instance.__coding = decoded  # noqa unused-private-member
-        return instance
-
-    @staticmethod
-    def _decode(encoding: str) -> list[int]:
-        return list(map(_character_to_int, encoding))
-
-    @property
-    def encoding(self) -> str:
-        return "".join(list(map(_int_to_char, self.__coding)))
-
-    def inverse(self) -> Wiring:
-        inverse = [0] * len(self)
-        for i, val in enumerate(self):
-            inverse[val] = i
-        return Wiring._from_decoded(inverse)
+from . import wiring
 
 
 class Rotor(Protocol):
@@ -81,7 +30,7 @@ class Rotor(Protocol):
         ...
 
     @property
-    def is_at_rotor(self) -> bool:
+    def is_at_notch(self) -> bool:
         ...
 
     @overload
@@ -107,11 +56,11 @@ class Rotor(Protocol):
         ...
 
     @property
-    def forward_wiring(self) -> Wiring:
+    def forward_wiring(self) -> wiring.Wiring:
         ...
 
     @property
-    def backward_wiring(self) -> Wiring:
+    def backward_wiring(self) -> wiring.Wiring:
         ...
 
 
@@ -127,7 +76,7 @@ class BasicRotor(Rotor):
         notch_position: int,
     ) -> None:
         self.name = name
-        self.wiring = Wiring(encoding)
+        self.wiring = wiring.Wiring(encoding)
         self.rotor_position = rotor_position
         self.notch_position = notch_position
         self.ring_setting = ring_setting
@@ -136,25 +85,31 @@ class BasicRotor(Rotor):
         """Turn the rotor"""
         self.rotor_position = (self.rotor_position + 1) % 26
 
+    def __repr__(self) -> str:
+        return (
+            f"{self.__class__.__name__}({self.name}, {self.wiring.encoding},"
+            f" {self.rotor_position}, {self.notch_position}, {self.ring_setting})"
+        )
+
     @property
-    def forward_wiring(self) -> Wiring:
+    def forward_wiring(self) -> wiring.Wiring:
         return self.wiring
 
     @property
-    def backward_wiring(self) -> Wiring:
+    def backward_wiring(self) -> wiring.Wiring:
         return self.wiring.inverse()
 
     @property
     def is_at_notch(self) -> bool:
         return self.rotor_position == self.notch_position
 
-    def _encipher(self, value: int, wiring: Sequence[int]) -> int:
+    def _encipher(self, value: int, wiring_: Sequence[int]) -> int:
         shift: int = self.rotor_position - self.ring_setting
-        return (wiring[(value + shift + 26) % 26] - shift + 26) % 26
+        return (wiring_[(value + shift + 26) % 26] - shift + 26) % 26
 
-    def _encipher_char(self, value: str, wiring: Sequence[int]) -> str:
-        int_val = _character_to_int(value)
-        return _int_to_char(self._encipher(int_val, wiring))
+    def _encipher_char(self, value: str, wiring_: Sequence[int]) -> str:
+        int_val = core.character_to_int(value)
+        return core.int_to_char(self._encipher(int_val, wiring_))
 
     @overload
     def forward(self, value: int) -> int:

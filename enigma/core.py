@@ -30,3 +30,11 @@ class EnigmaKey:
             self.indicators = [0, 0, 0]
         if len(self.rings) == 0:
             self.rings = [0, 0, 0]
+
+
+def character_to_int(char: str) -> int:
+    return ord(char) - 65
+
+
+def int_to_char(val: int) -> str:
+    return chr(val + 65)

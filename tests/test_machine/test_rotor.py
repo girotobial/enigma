@@ -5,66 +5,24 @@ from dataclasses import dataclass
 import pytest
 
 from enigma import core
-from enigma.machine import rotor
-
-
-class TestWiring:
-    @staticmethod
-    def test_wiring_encodes() -> None:
-        encoding = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        wiring = rotor.Wiring(encoding)
-        assert wiring.encoding == encoding
-        assert wiring == list(range(26))
-
-    @staticmethod
-    def test_wiring_encodes_null_string() -> None:
-        encoding = ""
-        wiring = rotor.Wiring(encoding)
-        assert wiring.encoding == encoding
-
-    @staticmethod
-    @pytest.mark.parametrize(
-        ("encoding", "inverse"),
-        [
-            ("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "ABCDEFGHIJKLMNOPQRSTUVWXYZ"),
-            ("EKMFLGDQVZNTOWYHXUSPAIBRCJ", "UWYGADFPVZBECKMTHXSLRINQOJ"),
-        ],
-    )
-    def test_wiring_inverse(encoding, inverse) -> None:
-        wiring = rotor.Wiring(encoding)
-        assert wiring.inverse().encoding == inverse
-
-    @staticmethod
-    @pytest.fixture
-    def wiring() -> rotor.Wiring:
-        return rotor.Wiring("EKMFLGDQVZNTOWYHXUSPAIBRCJ")
-
-    @staticmethod
-    def test_wiring_can_be_cast_to_list(wiring) -> None:
-        wiring_list = list(wiring)
-        assert isinstance(wiring_list, list)
-
-    @staticmethod
-    def test_wiring_can_be_sliced(wiring) -> None:
-        value = wiring[0]
-        assert value == 4
+from enigma.machine import rotor, wiring
 
 
 @dataclass(frozen=True)
 class _RotorAttrs:
-    forward_wiring: rotor.Wiring
+    forward_wiring: wiring.Wiring
     notch_position: int
 
 
 ROTOR_ENCODINGS = {
-    core.NamedRotor.I: _RotorAttrs(rotor.Wiring("EKMFLGDQVZNTOWYHXUSPAIBRCJ"), 16),
-    core.NamedRotor.II: _RotorAttrs(rotor.Wiring("AJDKSIRUXBLHWTMCQGZNPYFVOE"), 4),
-    core.NamedRotor.III: _RotorAttrs(rotor.Wiring("BDFHJLCPRTXVZNYEIWGAKMUSQO"), 21),
-    core.NamedRotor.IV: _RotorAttrs(rotor.Wiring("ESOVPZJAYQUIRHXLNFTGKDCMWB"), 9),
-    core.NamedRotor.V: _RotorAttrs(rotor.Wiring("VZBRGITYUPSDNHLXAWMJQOFECK"), 25),
-    core.NamedRotor.VI: _RotorAttrs(rotor.Wiring("JPGVOUMFYQBENHZRDKASXLICTW"), 0),
-    core.NamedRotor.VII: _RotorAttrs(rotor.Wiring("NZJHGRCXMYSWBOUFAIVLPEKQDT"), 0),
-    core.NamedRotor.VIII: _RotorAttrs(rotor.Wiring("FKQHTLXOCBJSPDZRAMEWNIUYGV"), 0),
+    core.NamedRotor.I: _RotorAttrs(wiring.Wiring("EKMFLGDQVZNTOWYHXUSPAIBRCJ"), 16),
+    core.NamedRotor.II: _RotorAttrs(wiring.Wiring("AJDKSIRUXBLHWTMCQGZNPYFVOE"), 4),
+    core.NamedRotor.III: _RotorAttrs(wiring.Wiring("BDFHJLCPRTXVZNYEIWGAKMUSQO"), 21),
+    core.NamedRotor.IV: _RotorAttrs(wiring.Wiring("ESOVPZJAYQUIRHXLNFTGKDCMWB"), 9),
+    core.NamedRotor.V: _RotorAttrs(wiring.Wiring("VZBRGITYUPSDNHLXAWMJQOFECK"), 25),
+    core.NamedRotor.VI: _RotorAttrs(wiring.Wiring("JPGVOUMFYQBENHZRDKASXLICTW"), 0),
+    core.NamedRotor.VII: _RotorAttrs(wiring.Wiring("NZJHGRCXMYSWBOUFAIVLPEKQDT"), 0),
+    core.NamedRotor.VIII: _RotorAttrs(wiring.Wiring("FKQHTLXOCBJSPDZRAMEWNIUYGV"), 0),
 }
 
 
@@ -111,7 +69,7 @@ class TestBasicRotor:
         assert test_rotor.rotor_position == 1
         assert test_rotor.notch_position == 2
         assert test_rotor.ring_setting == 3
-        expected_wiring = rotor.Wiring("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+        expected_wiring = wiring.Wiring("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
         assert test_rotor.forward_wiring == expected_wiring
         assert test_rotor.backward_wiring == expected_wiring.inverse()
 
